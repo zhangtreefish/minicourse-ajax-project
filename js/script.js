@@ -37,7 +37,28 @@ function loadData() {
             console.log("here at error section");
             $nytHeaderElem.text('There is problem finding NYTimes articles, my bad!');
         });
+//wikipedia AJAX request goes here
+    var wikiUrl='http://en.wikipedia.org/w/api.php?action=opensearch&search=' + cityVal + '&format=json&callback=wikiCallback';
+
+    var wikiRequestTimeout = setTimeout(function(){
+        $wikiElem.text('request to wikipedia failed');}, 8000);
+
+    $.ajax(wikiUrl,{
+        dataType: 'jsonp',
+        success: function(response){
+            var articles=response[1];
+            console.log(articles);
+            for (var i=0; i<5; i++) {
+                var article=articles[i];
+                var wik='http://en.wikipedia.org/wiki/'+article;
+                $wikiElem.append('<li><a href="'+wik+'">'+article+'</a></li>');
+            }//for
+            clearTimeout(wikiRequestTimeout);
+        }//success
+    });//wikiAPI
+
+
     return false;
 };//loadData
-
+//loadData();
 $('#form-container').submit(loadData);
